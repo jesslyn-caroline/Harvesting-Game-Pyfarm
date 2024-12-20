@@ -1043,13 +1043,14 @@ def barn_menu():
 
 # === Start of Chicken Barn Menu ===
 def chicken_barn_menu():
+    count_chicken = chicken_barn.animal_count()
     print('-' * 80)
     print(f'{'🐔 Chicken Barn 🐔':^80}')
     print('-' * 80)
 
     chicken_barn.print_animal_list('Chickens', '🐔')
 
-    if len(chicken_barn.animals) == 0: return
+    if count_chicken == 0: return
 
     print('1. Feed Chicken 🍚')
     print('2. Collect Egg 🥚')
@@ -1188,13 +1189,15 @@ def chicken_barn_menu():
 
 # === Start of Cow Barn Menu ===
 def cow_barn_menu():
+    count_cow = cow_barn.animal_count()
+    
     print('-' * 80)
     print(f'{'🐮 Cow Barn 🐮':^80}')
     print('-' * 80)
 
     cow_barn.print_animal_list('Cows', '🐮')
 
-    if len(cow_barn.animals) == 0: return
+    if len(count_cow) == 0: return
 
     print('1. Feed Cow 🌾')
     print('2. Collect Milk 🥛')
