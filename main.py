@@ -161,6 +161,9 @@ class ChickenBarn(Barn, TemplateList):
         super().__init__()
         self.animals.append(Chicken('Chic'))
 
+    def make_chicken_feed(self, corn_quantity):
+        return corn_quantity * 3
+    
     def collect_egg(self):
         egg = 0
         for animal in self.animals:
@@ -1050,7 +1053,8 @@ def chicken_barn_menu():
 
     print('1. Feed Chicken 🍚')
     print('2. Collect Egg 🥚')
-    print('3. Go back to Main Menu 👈')
+    print('3. Make chicken feed 🫘')
+    print('4. Go back to Main Menu 👈')
 
     print('-' * 80)
 
@@ -1060,7 +1064,7 @@ def chicken_barn_menu():
         choice = input('> Enter menu number: ')
         try:
             if choice == '': raise ValueError('> ❗ Menu number may not be empty!\n')
-            if choice not in ['1', '2', '3']:
+            if choice not in ['1', '2', '3', '4']:
                 raise ValueError('> ❗ Invalid option!\n')
             valid = True
         except ValueError as e:
@@ -1138,6 +1142,45 @@ def chicken_barn_menu():
         if egg == 0: print('> 🥚 There are no eggs that are ready to be collected...')
         else: print(f'> 🥚 You collected {egg} eggs!')
         print('-' * 80)
+        
+    elif choice == '3':
+        print(f'You have {inventory.list["Chicken Feed"]["quantity"]} Chicken Feed left')
+        print(f'Corn in Inventory: {inventory.list["Corn"]["Quantity"]}')
+        print()
+        print('1 🌽 -> 3 🫘')
+        valid = False
+        while valid is False:
+            choice = input('Do you want to make chicken feed (y/n)? ')
+            try:
+                if choice == '': raise ValueError('> ❗ Choice may not be empty!\n')
+                if choice not in ['y', 'n']: raise ValueError('> ❗ Invalid option!\n')
+                valid = True
+            except ValueError as e:
+                print(str(e))
+
+        if choice == 'y':
+            valid = False
+            while valid is False:
+                quantity = input('> Enter the number of corn you want to use: ')
+                try:
+                    if quantity == '': raise ValueError('> ❗ Choice may not be empty!\n')
+                    if not quantity.isnumeric(): raise ValueError('> ❗ Choice must be a number!\n')
+                    quantity = int(quantity)
+                    if quantity < 1: raise ValueError('> ❗ Invalid choice!\n')
+                    valid = True
+                except ValueError as e:
+                    print(str(e))
+
+            if inventory.list['Corn']['quantity'] - quantity < 0: print("You don't have enough corn!")
+            else:
+                inventory.list['Corn']['quantity'] -= quantity
+                total_made = chicken_barn.make_chicken_feed(quantity)
+                inventory.list['Chicken Feed']['quantity'] += total_made
+                print(f'> 🫘 You made {total_made} chicken feed!')
+
+        else:
+            print('-' * 80)
+        
     else:
         print('-' * 80)
         return
