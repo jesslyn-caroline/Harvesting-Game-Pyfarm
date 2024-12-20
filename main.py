@@ -1145,7 +1145,7 @@ def chicken_barn_menu():
         
     elif choice == '3':
         print(f'You have {inventory.list["Chicken Feed"]["quantity"]} Chicken Feed left')
-        print(f'Corn in Inventory: {inventory.list["Corn"]["Quantity"]}')
+        print(f'Corn in Inventory: {inventory.list["Corn"]["quantity"]}')
         print()
         print('1 🌽 -> 3 🫘')
         valid = False
