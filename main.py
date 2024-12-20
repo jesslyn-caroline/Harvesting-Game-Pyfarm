@@ -173,14 +173,18 @@ class CowBarn(Barn):
 
         print('> 🐄 List of cows in the cow barn:')
         print('-' * 80)
-
+        count = 0
         for animal in self.animals:
+            count += 1
+            print(f'> {count}. ')
             print(f'> 🐮 Name: {animal.name}')
             print(f'> ⏳ Age: {animal.age}')
             print(f'> ❤️ Health: {animal.health}')
             print(f'> 🍚 Feeded Today: {'Yes' if animal.feeded == True else 'No'}')
             print(f'> 🍚 Feeded Streak: {animal.feeded_days} day(s)')
             print('-' * 80)
+
+        return count
 
     def collect_milk(self):
         milk = 0
@@ -276,6 +280,11 @@ class Inventory:
                 'icon': '🫘',
                 'type': 'stock'
             },
+            'Cow Feed': {
+                'quantity': 30,
+                'price': 30,
+                'type': 'stock'
+            }
         }
 
     def print_inventory(self):
@@ -449,6 +458,11 @@ class MarketItems:
             'Chicken Feed': {
                 'icon': '🫘',
                 'price': 15,
+                'unlocked': True
+            },
+            'Cow Feed': {
+                'icon': '🌾',
+                'price': 30,
                 'unlocked': True
             }
         }
@@ -870,10 +884,15 @@ def market_buy_menu():
         if possible_to_buy == False:
             print('> ❗ You do not have enough coin to buy this item!')
         else:
-            if item_name in ['Chicken', 'Cow']: 
+            if item_name == 'Chicken':
                 for i in range (quantity):
                     chicken_name = input('> 🐔 What do you want to name?: ').title()
                     chicken_barn.add_animal(Chicken(chicken_name))
+                    
+            elif item_name == 'Cow': 
+                for i in range (quantity):
+                    cow_name = input('> 🐮 What do you want to name?: ').title()
+                    cow_barn.add_animal(Cow(cow_name))
 
             else: 
                 inventory.list[item_name]['quantity'] += quantity
@@ -952,8 +971,7 @@ def market_sell_menu():
     print()
 
     item_name, item = market.sell.get_item(choice)
-    print(f'item name {item_name}')
-    print("qty", inventory.list[item_name]['quantity'])
+
     if inventory.list[item_name]['quantity'] - quantity < 0:
         print('> ❗ You do not have enough of this item in your inventory!')
     else:
@@ -1141,7 +1159,7 @@ def cow_barn_menu():
 
     if len(cow_barn.animals) == 0: return
 
-    print('1. Feed Cow 🍚')
+    print('1. Feed Cow 🌾')
     print('2. Collect Milk 🥛')
     print('3. Go back to Main Menu 👈')
 
@@ -1152,6 +1170,7 @@ def cow_barn_menu():
     while valid is False:
         choice = input('> Enter menu number: ')
         try:
+            if choice == '': raise ValueError('> ❗ Menu number may not be empty!\n')
             if choice not in ['1', '2', '3']:
                 raise ValueError('> ❗ Invalid option!\n')
             valid = True
@@ -1159,10 +1178,71 @@ def cow_barn_menu():
             print(str(e))
 
     if choice == '1':
-        cow_barn.feed_animals()
+        cls()
         print('-' * 80)
-        print('> 🍚 Cow feeded!')
+        print(f'{'🐮 Cow Barn 🐮':^80}')
         print('-' * 80)
+        count_cow = cow_barn.show_cows()
+        print('-' * 80)
+        print(f'You have {inventory.list['Cow Feed']['quantity']} Cow Feed left')
+
+        valid = False
+        while valid is False:
+            choice = input('Do you want to feed all cows (y/n)? ')
+            try:
+                if choice == '': raise ValueError('> ❗ Choice may not be empty!\n')
+                if choice not in ['y', 'n']: raise ValueError('> ❗ Invalid option!\n')
+                valid = True
+            except ValueError as e:
+                print(str(e))
+
+        if choice == 'y':
+            if inventory.list['Cow Feed']['quantity'] - count_cow < 0: print("You don't have enough cow feed!")
+            else:
+                for index in range(1, count_cow+1):
+                    cow_barn.feed_animals(index)
+                inventory.list['Cow Feed']['quantity'] -= count_cow
+                print('-' * 80)
+                print('> 🐮 You fed all cow!')
+
+        elif choice == 'n':
+            valid = False
+            while valid is False:
+                choice = input('Do you want to feed some of the cows (y/n)? ')
+                try:
+                    if choice == '': raise ValueError('> ❗ Choice may not be empty!\n')
+                    if choice not in ['y', 'n']: raise ValueError('> ❗ Invalid option!\n')
+                    valid = True
+                except ValueError as e:
+                    print(str(e))
+
+            if choice == 'y':
+                valid = False
+                while valid is False:   
+                    index = input('> Enter the index of the cow you want to feed (single line seperated by space): ').split()
+
+                    try:
+                        if index == '': raise ValueError('> ❗ Index may not be empty!\n')
+                        for i in index:
+                            if not i.isnumeric(): raise ValueError('> ❗ Index must be a number!\n')
+                            num = int(i)
+                            if num < 1 or num > count_cow: raise ValueError('> ❗ Invalid index!\n')
+
+                        valid = True
+                    except ValueError as e:
+                        print(str(e))
+
+                if inventory.list['Cow Feed']['quantity'] - len(index) < 0: 
+                    print("You don't have enough cow feed!")
+                else:
+                    for i in index:
+                        cow_barn.feed_animals(int(i))
+                    inventory.list['Cow Feed']['quantity'] -= len(index)
+                    print(f'> {len(index)} cows has been fed!')
+
+            elif choice == 'n':
+                print('-' * 80)
+
     elif choice == '2':
         milk = cow_barn.collect_milk()
         print('-' * 80)
