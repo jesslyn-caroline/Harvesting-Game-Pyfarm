@@ -274,7 +274,7 @@ class Inventory:
             },
             'Cow Feed': {
                 'quantity': 30,
-                'price': 30,
+                'icon': '🌾',
                 'type': 'stock'
             }
         }
