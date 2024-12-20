@@ -1071,7 +1071,7 @@ def chicken_barn_menu():
         print('-' * 80)
         print(f'{'🐔 Chicken Barn 🐔':^80}')
         print('-' * 80)
-        count_chicken = chicken_barn.animal_count()
+        chicken_barn.print_animal_list('Chickens', '🐔')
         print('-' * 80)
         print(f'You have {inventory.list['Chicken Feed']['quantity']} Chicken Feed left')
         
@@ -1176,7 +1176,7 @@ def cow_barn_menu():
         print('-' * 80)
         print(f'{'🐮 Cow Barn 🐮':^80}')
         print('-' * 80)
-        count_cow = cow_barn.animal_count()
+        cow_barn.print_animal_list('Cows', '🐮')
         print('-' * 80)
         print(f'You have {inventory.list['Cow Feed']['quantity']} Cow Feed left')
 
